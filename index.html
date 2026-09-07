@@ -16,9 +16,9 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2316302E'/%3E%3Ctext x='50' y='68' font-size='54' font-family='Georgia,serif' fill='%23C9973B' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2316302E'/%3E%3Ctext x='50' y='68' font-size='54' font-family='Georgia,serif' fill='%23C9973B' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E" />
 
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -30,7 +30,7 @@
 <body>
 <div id="root"></div>
 
-<script type="text/babel" data-presets="react">
+<script type="text/plain" id="app-source">
 const { useState, useEffect } = React;
 
 /* ---------- localStorage tabanlı kalıcı hafıza ---------- */
@@ -539,6 +539,20 @@ function HocamApp() {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<HocamApp />);
+</script>
+
+<script>
+  // Babel'in yeni sürümü otomatik JSX runtime kullanıp "react/jsx-runtime"
+  // import etmeye çalışıyor; bu ortamda modül çözümleyici olmadığı için
+  // hata veriyor. Bu yüzden dönüşümü elle, klasik (React.createElement)
+  // modda çalıştırıp sonucu normal bir script olarak sayfaya ekliyoruz.
+  const sourceCode = document.getElementById("app-source").textContent;
+  const compiled = Babel.transform(sourceCode, {
+    presets: [["react", { runtime: "classic" }]],
+  }).code;
+  const runnable = document.createElement("script");
+  runnable.textContent = compiled;
+  document.body.appendChild(runnable);
 </script>
 </body>
 </html>
